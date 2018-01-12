@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "file:///D:/project/my-vue/main.html",
+            "webRoot": "${workspaceRoot}"
+        }
+    ]
+}
