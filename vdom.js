@@ -69,6 +69,14 @@ class Diff{
      */
     _diff(oldNode,newNode,index,patches){
         var currentPatch=[];
+        /**
+         * currentPatch格式例子:
+         * {
+         *   "0":[{type:"1",xxx},{type:"2",xxx}],
+         *   "1":[{type:"2",xxx},{type:"3",xxx}]
+         * }
+         */
+
         if(newNode===null){
             //todo依赖listdiff算法进行标记为删除
         }
@@ -92,6 +100,13 @@ class Diff{
                 });
             }
         }
+        else{
+            //如果是不同节点类型,则记录替换
+            currentPatch.push({
+                type:PATCHTYPE.REPLACE,
+                newNode:newNode
+            });
+        }
         if(currentPatch.length){
             patches[index]=currentPatch;
         }
@@ -100,24 +115,42 @@ class Diff{
      * 比较属性差异,返回属性的差异
      * @param {*} oldNode 
      * @param {*} newNode 
+     * @return {*} propsPatches 返回属性的增删改
      */
     _diffProps(oldNode,newNode){
         var oldProps=oldNode.props;
         var newProps=newNode.props;
         var propsPatches={};
+        var diffCount=0;
         //更新或删除
         for(key in oldProps){
             if(newNode[key]!=oldProps[key]){
                 propsPatches[key]=newNode[key];
+                diffCount+=1;
             }
         }
         //新增
         for(key in newProps){
             if(!oldNode.hasOwnProperty(key)){
                 propsPatches[key]=newProps[key];
+                diffCount+=1;
             }
         }
-        
+        if(diffCount===0){
+            return null;
+        }
+        return propsPatches;
+    }
+    /**
+     * diff子节点
+     * @param {*} oldChildren 旧的子节点
+     * @param {*} newChildren 新的子节点
+     * @param {*} index 当前旧的子节点的索引
+     * @param {*} patches 总的补丁
+     * @param {*} currentPatch 当前旧的子节点的父节点的补丁 
+     */
+    _diffChildren(oldChildren,newChildren,index,patches,currentPatch){
+
     }
 }
 
