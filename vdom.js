@@ -78,7 +78,7 @@ class Diff{
          */
 
         if(newNode===null){
-            //todo依赖listdiff算法进行标记为删除
+            //依赖listdiff算法进行标记为删除
         }
         else if(Util.isString(oldNode)&&Util.isString(newNode)){
             //新旧节点都为字符串,则进行文本替换
@@ -98,6 +98,15 @@ class Diff{
                     type:PATCHTYPE.PROPS,
                     props:propsPatches
                 });
+            }
+            //添加,删除
+            var listPatches=_diffList(oldNode.childrenList,newNode.childrenList);
+            if(listPatches.moves.length){
+                var reorderPatch={
+                    type:PATCHTYPE.REORDER,
+                    moves:listPatches.moves
+                };
+                currentPatch.push(reorderPatch);
             }
         }
         else{
@@ -149,8 +158,28 @@ class Diff{
      * @param {*} patches 总的补丁
      * @param {*} currentPatch 当前旧的子节点的父节点的补丁 
      */
-    _diffChildren(oldChildren,newChildren,index,patches,currentPatch){
-
+    _diffChildren(oldChildrenList,newChildrenList,index,patches,currentPatch){
+        var lastNode=null;
+        var currentNodeIndex=index;
+        oldChildrenList.forEach(function(oldChildren,index,oldChildrenList){
+            var newChildren=newChildrenList[index];
+            if(lastNode&&lastNode.count){
+                currentNodeIndex+=lastNode.count+1;
+            }
+            else{
+                currentNodeIndex+=1;
+            }
+            _diff(oldChildren,newChildren,currentNodeIndex,patches);
+            lastNode=oldChildren;
+        });
+    }
+    /**
+     * 比较子节点的添加,删除
+     * @param {*} oldList 
+     * @param {*} newList 
+     */
+    _diffList(oldList,newList){
+        
     }
 }
 
